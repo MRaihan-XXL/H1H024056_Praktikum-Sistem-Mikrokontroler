@@ -4,44 +4,56 @@
 
 1. Pada kondisi apa program masuk ke blok if?
 
-   > Program masuk ke blok if pada kondisi `timeDelay <= 100`. Jika nilainya sudah kurang dari 100 maka akan ada delay 3 detik baru mengatur ulang timedelay ke 100 lagi dan seterusnya.
+   > Program masuk ke blok `if` ketika nilai variabel `timeDelay <= 100`.
 
 2. Pada kondisi apa program masuk ke blok else?
 
-   > Program masuk ke blok pada kondisi `timeDelay > 100`.
+   > Program masuk ke blok `else` ketika `timeDelay > 100`. 
 
 3. Apa fungsi dari perintah delay(timeDelay)?
 
-   > Perintah `delay(timeDelay)` digunakan untuk memberikan jeda antar perintah dalam satuan miliseconds. Pada program tersebut maka itu akan memberikan efek kedip sesuai dengan variabel `timeDelay` saat itu. Kedip akan semakin cepat seiring berkurangnya nilai `timeDelay`.
+   > `delay(timeDelay)` berfungsi menunda eksekusi program selama `timeDelay` milidetik. `delay` secara langsung menentukan kecepatan kedipan LED. Semakin kecil nilai `timeDelay`, semakin cepat LED berkedip, dan sebaliknya.
 
-4. Jika program yang dibuat memiliki alur mati → lambat → cepat → reset (mati), ubah menjadi LED tidak langsung reset → tetapi berubah dari cepat → sedang → mati.
+4. Jika program yang dibuat memiliki alur mati → lambat → cepat → reset (mati),
+ubah menjadi LED tidak langsung reset → tetapi berubah dari cepat → sedang →
+mati dan berikan penjelasan disetiap baris kode nya dalam bentuk README.md!
 
    ```c++
-   const int ledPin = 6; // nomor pin LED yang dipakau
-   int timeDelay = 1000; // Variabel penampung waktu delay
-   unsigned int phase = 0; // variabel penampung fase, (0 = lampat -> cepat, 1 = cepat -> sedang -> lambat), positif only
+   // Modifikasi Percobaan 1A: LED cepat -> sedang -> mati
+const int ledPin = 6;        // LED terhubung ke pin digital 6
+int timeDelay = 1000;        // waktu delay awal (lambat)
+int arah = -1;               // -1 = percepat, 1 = perlambat
 
-   void setup() { // fungsi yang akan di jalankan sekali saat arduino menyala
-       pinMode(ledPin, OUTPUT); // menginisiasi pin LED sebagai output
-   }
+void setup() {
+    pinMode(ledPin, OUTPUT); // set pin 6 sebagai output
+}
 
-   void loop() { // fungsi yang akan dijalankan terus menerus oleh arduino
-       digitalWrite(ledPin, HIGH); // mneyalakan LED
-       delay(timeDelay); // jeda, berapa lama LED menyala
+void loop() {
+    digitalWrite(ledPin, HIGH);  // nyalakan LED
+    delay(timeDelay);            // tahan sesuai timeDelay
+    digitalWrite(ledPin, LOW);   // matikan LED
+    delay(timeDelay);            // tahan sesuai timeDelay
 
-       digitalWrite(ledPin, LOW); // mematikan LED
-       delay(timeDelay); // Jeda antar LED
+    // Jika kecepatan sudah mencapai batas cepat (delay <= 100)
+    if (timeDelay <= 100) {
+        arah = 1;                // ubah arah menjadi perlambat
+    }
+    // Jika kecepatan sudah mencapai batas lambat (delay >= 1000)
+    else if (timeDelay >= 1000) {
+        arah = -1;               // ubah arah menjadi percepat
+    }
 
-       if (timeDelay <= 100 && phase == 0) { // mengecek apakah timeDelay kurang dari atau sama dengan 100 dan phase harus 0
-           phase = 1; // mengubah ke fase kebalikannya (cepat -> sedang -> lambat)
-       } else if(timeDelay > 1000 && phase == 1) { // mengecek apakah timeDelay lebih besar dari 1000 dan phase harus 1
-           delay(3000); // memberika jeda setelah full satu loop (lambat -> cepat -> sedang -> lambat -> reset)
-           timeDelay = 1000; // mengembalikan nilai timeDelay ke 1000
-           phase = 0; // mengembalikan nilai phase ke 0
-       } else { // jika kedua kondisi diatas tidak terpenuhi maka blok ini akan di jalankan
-           phase == 0 ? timeDelay -= 100 : timeDelay += 200; // ternary, mengecek phase, jika phase == 0 maka timeDelay akan terus berkurang 100, sebaliknya jika phase 1 maka nilai akan semain bertambah
-       }
-   }
+    // Ubah timeDelay: percepat jika arah=-1, perlambat jika arah=1
+    timeDelay += arah * 100;
+
+    // Jika delay mencapai 1000 dan sedang dalam mode perlambat (arah=1)
+    if (timeDelay == 1000 && arah == 1) {
+        digitalWrite(ledPin, LOW);  // pastikan LED mati
+        delay(3000);                // mati total selama 3 detik
+        timeDelay = 1000;           // reset ke delay awal
+        arah = -1;                  // reset arah ke percepatan
+    }
+}
    ```
 
 ## 1.6.4 Percobaan 2A: Perulangan
