@@ -20,38 +20,39 @@ mati dan berikan penjelasan disetiap baris kode nya dalam bentuk README.md!
 
    ```c++
    // Modifikasi Percobaan 1A: LED cepat -> sedang -> mati
-const int ledPin = 6;        // LED terhubung ke pin digital 6
-int timeDelay = 1000;        // waktu delay awal (lambat)
-int arah = -1;               // -1 = percepat, 1 = perlambat
+   const int ledPin = 6;        // LED terhubung ke pin digital 6
+   int timeDelay = 1000;        // waktu delay awal (lambat)
+   int arah = -1;               // -1 = percepat, 1 = perlambat
+   
+   void setup() {
+       pinMode(ledPin, OUTPUT); // set pin 6 sebagai output
+   }
 
-void setup() {
-    pinMode(ledPin, OUTPUT); // set pin 6 sebagai output
-}
+   void loop() {
+       digitalWrite(ledPin, HIGH);  // nyalakan LED
+       delay(timeDelay);            // tahan sesuai timeDelay
+       digitalWrite(ledPin, LOW);   // matikan LED
+       delay(timeDelay);            // tahan sesuai timeDelay
 
-void loop() {
-    digitalWrite(ledPin, HIGH);  // nyalakan LED
-    delay(timeDelay);            // tahan sesuai timeDelay
-    digitalWrite(ledPin, LOW);   // matikan LED
-    delay(timeDelay);            // tahan sesuai timeDelay
+       // Jika kecepatan sudah mencapai batas cepat (delay <= 100)
+       if (timeDelay <= 100) {
+           arah = 1;                // ubah arah menjadi perlambat
+       }
+       // Jika kecepatan sudah mencapai batas lambat (delay >= 1000)
+       else if (timeDelay >= 1000) {
+           arah = -1;               // ubah arah menjadi percepat
+       }
+   
+       // Ubah timeDelay: percepat jika arah=-1, perlambat jika arah=1
+       timeDelay += arah * 100;
 
-    // Jika kecepatan sudah mencapai batas cepat (delay <= 100)
-    if (timeDelay <= 100) {
-        arah = 1;                // ubah arah menjadi perlambat
-    }
-    // Jika kecepatan sudah mencapai batas lambat (delay >= 1000)
-    else if (timeDelay >= 1000) {
-        arah = -1;               // ubah arah menjadi percepat
-    }
-
-    // Ubah timeDelay: percepat jika arah=-1, perlambat jika arah=1
-    timeDelay += arah * 100;
-
-    // Jika delay mencapai 1000 dan sedang dalam mode perlambat (arah=1)
-    if (timeDelay == 1000 && arah == 1) {
-        digitalWrite(ledPin, LOW);  // pastikan LED mati
-        delay(3000);                // mati total selama 3 detik
-        timeDelay = 1000;           // reset ke delay awal
-        arah = -1;                  // reset arah ke percepatan
+       // Jika delay mencapai 1000 dan sedang dalam mode perlambat (arah=1)
+       if (timeDelay == 1000 && arah == 1) {
+           digitalWrite(ledPin, LOW);  // pastikan LED mati
+           delay(3000);                // mati total selama 3 detik
+           timeDelay = 1000;           // reset ke delay awal
+           arah = -1;                  // reset arah ke percepatan
+      }
     }
    ```
 
