@@ -53,7 +53,6 @@ void loop() {
         timeDelay = 1000;           // reset ke delay awal
         arah = -1;                  // reset arah ke percepatan
     }
-}
    ```
 
 ## 1.6.4 Percobaan 2A: Perulangan
