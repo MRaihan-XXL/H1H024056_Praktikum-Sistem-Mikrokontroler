@@ -1,9 +1,5 @@
 <h2>Modul Perulangan dan Percabangan</h2>
 
-# Pertemuan 1
-
-> Pertanyaan:
-
 ## 1.5.4 Percobaan 1A: Percabangan
 
 1. Pada kondisi apa program masuk ke blok if?
