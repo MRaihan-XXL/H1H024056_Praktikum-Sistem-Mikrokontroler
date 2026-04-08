@@ -52,7 +52,7 @@
 
 1. Gambarkan rangkaian schematic 5 LED running yang digunakan pada percobaan!
 
-![Skematik](skematik.png)
+![Skematik](Skematik.png)
 
 2. Jelaskan bagaimana program membuat efek LED berjalan dari kiri ke kanan!
 
