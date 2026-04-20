@@ -4,7 +4,7 @@
 
 1. Gambarkan rangkaian schematic yang digunakan pada percobaan!
 
-![Skematik 2.5]()
+![Skematik 2.5](Skematik_Percobaan_2A.png)
 
 2. Apa yang terjadi jika nilai num lebih dari 15?
 
@@ -66,7 +66,7 @@
 
 1. Gambarkan rangkaian schematic yang digunakan pada percobaan!
 
-![Skematik 2.6](skematik-2.6.png)
+![Skematik 2.6](Skematik_Percobaan_2B.png)
 
 2. Mengapa pada push button digunakan mode INPUT_PULLUP pada Arduino Uno? Apa keuntungannya dibandingkan rangkaian biasa?
 
@@ -79,8 +79,6 @@
 
 
 4. Modifikasi rangkaian dan program dengan dua push button yang berfungsi sebagai penambahan (increment) dan pengurangan (decrement) pada sistem counter dan berikan penjelasan disetiap baris kodenya dalam bentuk README.md!
-
-   ![Rangkaian dengan 2 button](rangkaian-2.6_2btn.png)
 
    ```c++
    #include <Arduino.h>
