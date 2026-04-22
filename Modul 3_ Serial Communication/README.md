@@ -158,12 +158,19 @@ void loop() {
 
 1. Percobaan 3A: Komunikasi Serial (UART)
 
-![Serial OFF](dokumentasi-uart_off.jpg)
-![Serial ON](dokumentasi-uart_on.jpg)
+![Gambar 1](Dokumentasi_Percobaan_3A_I.jpg)
+![Gambar 2](Dokumentasi_Percobaan_3A_II.jpg)
+![Gambar 3](Dokumentasi_Percobaan_3A_III.jpg)
 
 2. Percobaan 3B: Inter-Integrated Circuit (I2C)
 
-![I2C 0](dokumentasi-i2c_0.jpg)
-![I2C 1](dokumentasi-i2c_1.jpg)
+![Gambar 1](Dokumentasi_Percobaan_3B_I.jpg)
+![Gambar 2](Dokumentasi_Percobaan_3B_II.jpg)
 
-[Video dokumentasi I2C](dokumentasi-i2c_2.mp4)
+2. Hasil Output Percobaan 3B (No.4)
+
+![ACD 1](Hasil_Dokumentasi_Percobaan_3B_(ACD=1).png)
+![ACD 21](Hasil_Dokumentasi_Percobaan_3B_(ACD=21).png)
+![ACD 49](Hasil_Dokumentasi_Percobaan_3B_(ACD=49).png)
+![ACD 74](Hasil_Dokumentasi_Percobaan_3B_(ACD=74).png)
+![ACD 96](Hasil_Dokumentasi_Percobaan_3B_(ACD=96).png)
