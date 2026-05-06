@@ -1,73 +1,79 @@
 # Pertemuan 4
 
-## 3.5.4 Percobaan 4A: Analog to Digital Converter (ADC)
+## 4.5.4 Percobaan 4A: Analog to Digital Converter (ADC)
 
 1. Apa fungsi perintah analogRead() pada rangkaian praktikum ini?
 
-> User mengetik karakter di Serial Monitor Arduino IDE, kemudian menekan enter. Komputer mengirimkan karakter tersebut melalui kabel USB ke Arduino. Di dalam loop(), Serial.available() mendeteksi adanya data (bernilai >0). char data = Serial.read() membaca satu karakter. Program membandingkan data dengan '1' atau '0'. Jika cocok, digitalWrite(PIN_LED, HIGH/LOW) mengubah status LED. Arduino mengirim balasan "LED ON" atau "LED OFF" ke Serial Monitor sebagai konfirmasi.
+> berfungsi membaca tegangan analog pada pin A0 yang berasal dari potensiometer. Potensiometer yang diputar menghasilkan tegangan antara 0V (kiri penuh) hingga 5V (kanan penuh). Fungsi ini mengubah tegangan tersebut menjadi nilai digital 10-bit (0-1023). Semakin besar tegangan, semakin besar nilai ADC. Nilai inilah yang kemudian digunakan untuk mengontrol posisi servo setelah melalui proses map().
 
 2. Mengapa diperlukan fungsi map() dalam program tersebut?
 
-> Serial.available() digunakan untuk mengecek apakah ada data yang masuk ke buffer serial. Jika tidak ada, program tidak perlu membaca karena Serial.read() akan mengembalikan nilai -1 yang dapat menyebabkan error logika sehingga program menjadi tidak efisien (banyak pembacaan percuma).
+> Fungsi map() diperlukan karena rentang nilai ADC (0-1023) tidak sama dengan rentang sudut servo (0-180 derajat). Jika langsung menggunakan nilai ADC (misalnya myservo.write(val)), servo hanya akan bergerak pada rentang yang sangat sempit maka dari itu dengan map(val, 0, 1023, 0, 180), nilai 0-1023 dipetakan secara proporsional ke 0-180, sehingga setiap putaran potensiometer menghasilkan pergerakan servo yang tepat.
 
 3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md 
 
 ```c++
-// Modifikasi 3A: LED berkedip saat input '2', berhenti saat input '0'
-#include <Arduino.h>
+#include <Servo.h> // library untuk servo motor
 
-const int PIN_LED = 12;
-bool blinkMode = false;   // status mode berkedip
-unsigned long previousMillis = 0;
-const long interval = 500; // jeda 500ms
-bool ledState = false;
+Servo myservo; // membuat objek servo
+
+// ===================== PIN SETUP =====================
+// Tentukan pin yang digunakan untuk potensiometer dan servo
+const int potensioPin = A0;  // isi pin analog input (contoh A0)
+const int servoPin = 9;      // isi pin digital untuk servo (PWM)
+
+// ===================== VARIABEL =====================
+// Variabel untuk menyimpan data ADC dan sudut servo
+int pos = 0; // isi dengan tipe data dan inisialisasi awal
+int val = 0; // isi dengan tipe data dan inisialisasi awal
 
 void setup() {
-    Serial.begin(9600);
-    Serial.println("Ketik '1' (ON), '0' (OFF), '2' (BLINK)");
-    pinMode(PIN_LED, OUTPUT);
+
+  // Hubungkan servo ke pin yang sudah ditentukan
+  myservo.attach(servoPin); // isi dengan servoPin
+
+  // Aktifkan komunikasi serial untuk monitoring
+  Serial.begin(9600); // isi baud rate (contoh 9600)
+
 }
 
 void loop() {
-    // Baca perintah dari serial
-    if (Serial.available() > 0) {
-        char data = Serial.read();
-        if (data == '1') {
-            blinkMode = false;
-            digitalWrite(PIN_LED, HIGH);
-            Serial.println("LED ON");
-        }
-        else if (data == '0') {
-            blinkMode = false;
-            digitalWrite(PIN_LED, LOW);
-            Serial.println("LED OFF");
-        }
-        else if (data == '2') {
-            blinkMode = true;
-            Serial.println("BLINK MODE ON");
-        }
-        else if (data != '\n' && data != '\r') {
-            Serial.println("Perintah tidak dikenal");
-        }
-    }
-    
-    // Jika mode blink aktif, lakukan kedip tanpa delay() blocking
-    if (blinkMode) {
-        unsigned long currentMillis = millis();
-        if (currentMillis - previousMillis >= interval) {
-            previousMillis = currentMillis;
-            ledState = !ledState;
-            digitalWrite(PIN_LED, ledState);
-        }
-    }
+
+  // ===================== PEMBACAAN ADC =====================
+  // Baca nilai dari potensiometer (rentang 0–1023)
+  val = analogRead(); // isi dengan potensioPin
+
+  // ===================== KONVERSI DATA =====================
+  // Ubah nilai ADC menjadi sudut servo (0–180 derajat)
+  pos = map(val,
+             0,   	// isi nilai minimum ADC
+             1023,  // isi nilai maksimum ADC
+             30,   	// isi sudut minimum servo
+             150);  // isi sudut maksimum servo
+
+  // ===================== OUTPUT SERVO =====================
+  // Gerakkan servo sesuai hasil mapping
+  myservo.write(); // isi dengan variabel sudut
+
+  // ===================== MONITORING DATA =====================
+  // Tampilkan data ADC dan sudut servo ke Serial Monitor
+  Serial.print("ADC Potensio: ");
+  Serial.print(); // isi variabel ADC
+
+  Serial.print(" | Sudut Servo: ");
+  Serial.println(); // isi variabel sudut
+
+  // ===================== STABILISASI =====================
+  // Delay untuk memberi waktu servo bergerak stabil
+  delay(100); // isi dalam milidetik
 }
 ```
 
-## 3.6.4 Percobaan 4B: Pulse Width Modulation (PWM)
+## 4.6.4 Percobaan 4B: Pulse Width Modulation (PWM)
 
 1. Jelaskan mengapa LED dapat diatur kecerahannya menggunakan fungsi analogWrite()!
 
-> Hanya terdapat dua kabel: SDA (data) dan SCL (clock). Arduino mengirimkan alamat slave (0x27) terlebih dahulu untuk "memanggil" LCD. Setelah LCD merespon dengan acknowledge (ACK), Arduino mengirimkan perintah atau data (misal inisialisasi, set kursor, karakter). Library LiquidCrystal_I2C.h menyembunyikan detail ini. Fungsi lcd.print() akan mengirimkan data karakter ke alamat 0x27 melalui bus I2C. Karena I2C adalah protokol sinkron, clock (SCL) diatur oleh Arduino agar kedua perangkat sinkron. Keuntungan: dengan 2 kabel, bisa dihubungkan banyak slave (masing-masing dengan alamat unik).
+> LED pada dasarnya hanya memiliki dua keadaan: menyala penuh (HIGH, 5V) atau mati (LOW, 0V). Namun, dengan PWM, pin digital dinyalakan dan dimatikan sangat cepat (sekitar 500 kali per detik). Mata manusia tidak mampu melihat kedipan cepat ini, sehingga yang terlihat adalah kecerahan rata-rata. analogWrite(ledPin, pwm) mengatur duty cycle (persentase waktu HIGH dalam satu periode). Semakin besar nilai PWM (0-255), semakin besar duty cycle, semakin terang LED.
 
 2. Apa hubungan antara nilai ADC (0–1023) dan nilai PWM (0–255)?
 
