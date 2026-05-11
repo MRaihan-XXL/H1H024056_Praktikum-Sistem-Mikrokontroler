@@ -14,7 +14,7 @@ void setup() {
 
   // ===================== OUTPUT SETUP =====================
   // Atur pin LED sebagai output
-  pinMode(ledPin, );
+  pinMode(ledPin, 9);
 
   // ===================== SERIAL MONITOR =====================
   // Aktifkan komunikasi serial untuk melihat data pembacaan
