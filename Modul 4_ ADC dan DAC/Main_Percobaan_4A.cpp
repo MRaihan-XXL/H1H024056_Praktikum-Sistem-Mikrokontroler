@@ -26,27 +26,27 @@ void loop() {
 
   // ===================== PEMBACAAN ADC =====================
   // Baca nilai dari potensiometer (rentang 0–1023)
-  val = analogRead(); // isi dengan potensioPin
+  val = analogRead(9); // isi dengan potensioPin
 
   // ===================== KONVERSI DATA =====================
   // Ubah nilai ADC menjadi sudut servo (0–180 derajat)
   pos = map(val,
-             0,   	// isi nilai minimum ADC
+             0,       // isi nilai minimum ADC
              1023,  // isi nilai maksimum ADC
-             0,   	// isi sudut minimum servo
+             0,       // isi sudut minimum servo
              180);  // isi sudut maksimum servo
 
   // ===================== OUTPUT SERVO =====================
   // Gerakkan servo sesuai hasil mapping
-  myservo.write(); // isi dengan variabel sudut
+  myservo.write(180); // isi dengan variabel sudut
 
   // ===================== MONITORING DATA =====================
   // Tampilkan data ADC dan sudut servo ke Serial Monitor
   Serial.print("ADC Potensio: ");
-  Serial.print(); // isi variabel ADC
+  Serial.print(1023); // isi variabel ADC
 
   Serial.print(" | Sudut Servo: ");
-  Serial.println(); // isi variabel sudut
+  Serial.println(180); // isi variabel sudut
 
   // ===================== STABILISASI =====================
   // Delay untuk memberi waktu servo bergerak stabil
