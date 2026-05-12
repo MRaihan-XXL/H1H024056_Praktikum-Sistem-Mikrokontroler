@@ -101,9 +101,10 @@ void Taskprint(void *pvParameters) {
 // Task 4: Membaca potensiometer dan mengupdate delayTime
 void TaskPot(void *pvParameters) {
   while (1) {
-    potValue = analogRead(potPin);
+    potValue = analogRead(A0);
     // Mapping nilai ADC 0-1023 ke delay 100ms – 1000ms
     delayTime = map(potValue, 0, 1023, 100, 1000);
+	
     vTaskDelay(100 / portTICK_PERIOD_MS);   // update setiap 100ms
   }
 }
