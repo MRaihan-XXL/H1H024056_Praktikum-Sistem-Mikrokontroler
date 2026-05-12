@@ -2,9 +2,10 @@
 
 ## 5.5.4 Percobaan 5A: Multitasking dengan FreeRTOS (LED + Potensiometer)
 
-1. Apa fungsi perintah analogRead() pada rangkaian praktikum ini?
+1. Apakah ketiga task berjalan secara bersamaan atau bergantian? Jelaskan mekanismenya!
 
-> berfungsi membaca tegangan analog pada pin A0 yang berasal dari potensiometer. Potensiometer yang diputar menghasilkan tegangan antara 0V (kiri penuh) hingga 5V (kanan penuh). Fungsi ini mengubah tegangan tersebut menjadi nilai digital 10-bit (0-1023). Semakin besar tegangan, semakin besar nilai ADC. Nilai inilah yang kemudian digunakan untuk mengontrol posisi servo setelah melalui proses map().
+> Ketiga task berjalan secara bergantian (concurrent), bukan bersamaan (paralel murni) karena Arduino Uno hanya memiliki satu inti prosesor. Mekanismenya diatur oleh scheduler FreeRTOS. Scheduler membagi waktu prosesor secara bergantian ke setiap task dalam waktu yang sangat singkat. Ketika suatu task memanggil vTaskDelay(), task tersebut masuk ke status blocked dan scheduler langsung beralih ke task lain yang siap berjalan. Karena pergantian task terjadi sangat cepat, efeknya terlihat seolah semua task berjalan bersamaan.
+Pada program ini, ketiga task memiliki prioritas yang sama (prioritas 1). Scheduler menggunakan skema round‑robin dengan time slicing, sehingga setiap task mendapat jatah waktu eksekusi secara bergantian.
 
 2. Mengapa diperlukan fungsi map() dalam program tersebut?
 
