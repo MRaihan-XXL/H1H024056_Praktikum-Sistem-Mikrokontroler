@@ -10,7 +10,19 @@
 
 2. Mengapa diperlukan fungsi map() dalam program tersebut?
 
-> Fungsi map() diperlukan karena rentang nilai ADC (0-1023) tidak sama dengan rentang sudut servo (0-180 derajat). Jika langsung menggunakan nilai ADC (misalnya myservo.write(val)), servo hanya akan bergerak pada rentang yang sangat sempit maka dari itu dengan map(val, 0, 1023, 0, 180), nilai 0-1023 dipetakan secara proporsional ke 0-180, sehingga setiap putaran potensiometer menghasilkan pergerakan servo yang tepat.
+> Langkah menambahkan task keempat [3]:
+
+Deklarasikan fungsi task baru, misal void TaskBaru(void *pvParameters).
+
+Definisikan fungsi tersebut di bawah loop() dengan infinite loop while(1) dan vTaskDelay().
+
+Di dalam setup(), panggil xTaskCreate(TaskBaru, "task4", 128, NULL, 1, NULL).
+
+Pastikan stack size (128) cukup untuk task baru. Jika tidak, tingkatkan (misal 256).
+
+Upload ulang program.
+
+Contoh task keempat untuk menyalakan LED di pin 6 setiap 700 ms:
 
 3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md 
 
