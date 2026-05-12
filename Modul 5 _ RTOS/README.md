@@ -10,19 +10,13 @@
 
 2. Mengapa diperlukan fungsi map() dalam program tersebut?
 
-> Langkah menambahkan task keempat [3]:
-
-Deklarasikan fungsi task baru, misal void TaskBaru(void *pvParameters).
-
-Definisikan fungsi tersebut di bawah loop() dengan infinite loop while(1) dan vTaskDelay().
-
-Di dalam setup(), panggil xTaskCreate(TaskBaru, "task4", 128, NULL, 1, NULL).
-
-Pastikan stack size (128) cukup untuk task baru. Jika tidak, tingkatkan (misal 256).
-
-Upload ulang program.
-
-Contoh task keempat untuk menyalakan LED di pin 6 setiap 700 ms:
+> Langkah menambahkan task keempat:
+> 1. Deklarasikan fungsi task baru, misal void TaskBaru(void *pvParameters).
+> 2. Definisikan fungsi tersebut di bawah loop() dengan infinite loop while(1) dan vTaskDelay().
+> 3. Di dalam setup(), panggil xTaskCreate(TaskBaru, "task4", 128, NULL, 1, NULL).
+> 4. Pastikan stack size (128) cukup untuk task baru. Jika tidak, tingkatkan (misal 256).
+> 5. Upload ulang program.
+> Contoh task keempat untuk menyalakan LED di pin 6 setiap 700 ms:
 
 3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md 
 
