@@ -30,62 +30,82 @@ void TaskBaru(void *pvParameters) {
 }
 ```
 
-3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md 
+3. Modifikasilah program dengan menambah sensor (misalnya potensiometer), lalu gunakan nilainya untuk mengontrol kecepatan LED! Bagaimana hasilnya? Jelaskan program pada file README.md.
 
 ```c++
-#include <Servo.h> // library untuk servo motor
+#include <Arduino_FreeRTOS.h>
 
-Servo myservo; // membuat objek servo
+void TaskBlink1(void *pvParameters);
+void TaskBlink2(void *pvParameters);
+void Taskprint(void *pvParameters);
+void TaskPot(void *pvParameters);
 
-// ===================== PIN SETUP =====================
-// Tentukan pin yang digunakan untuk potensiometer dan servo
-const int potensioPin = A0;  // isi pin analog input (contoh A0)
-const int servoPin = 9;      // isi pin digital untuk servo (PWM)
+const int ledPin1 = 8;   // LED merah (kecepatan dikontrol potensio)
+const int ledPin2 = 7;   // LED kuning
+const int potPin = A0;   // potensiometer
 
-// ===================== VARIABEL =====================
-// Variabel untuk menyimpan data ADC dan sudut servo
-int pos = 0; // isi dengan tipe data dan inisialisasi awal
-int val = 0; // isi dengan tipe data dan inisialisasi awal
+int potValue = 0;
+int delayTime = 200;      // delay default (ms)
 
 void setup() {
-
-  // Hubungkan servo ke pin yang sudah ditentukan
-  myservo.attach(servoPin); // isi dengan servoPin
-
-  // Aktifkan komunikasi serial untuk monitoring
-  Serial.begin(9600); // isi baud rate (contoh 9600)
-
+  Serial.begin(9600);
+  
+  // Membuat 4 task dengan prioritas sama (1)
+  xTaskCreate(TaskBlink1, "task1", 128, NULL, 1, NULL);
+  xTaskCreate(TaskBlink2, "task2", 128, NULL, 1, NULL);
+  xTaskCreate(Taskprint,  "task3", 128, NULL, 1, NULL);
+  xTaskCreate(TaskPot,    "task4", 128, NULL, 1, NULL);
+  
+  vTaskStartScheduler();   // Mulai RTOS scheduler
 }
 
 void loop() {
+  // Kosong – semua eksekusi ditangani oleh scheduler
+}
 
-  // ===================== PEMBACAAN ADC =====================
-  // Baca nilai dari potensiometer (rentang 0–1023)
-  val = analogRead(); // isi dengan potensioPin
+// Task 1: LED merah (pin 8) – kecepatan mengikuti potensiometer
+void TaskBlink1(void *pvParameters) {
+  pinMode(ledPin1, OUTPUT);
+  while (1) {
+    digitalWrite(ledPin1, HIGH);
+    vTaskDelay(delayTime / portTICK_PERIOD_MS);
+    digitalWrite(ledPin1, LOW);
+    vTaskDelay(delayTime / portTICK_PERIOD_MS);
+    Serial.print("Task1 delay: ");
+    Serial.println(delayTime);
+  }
+}
 
-  // ===================== KONVERSI DATA =====================
-  // Ubah nilai ADC menjadi sudut servo (30–150 derajat)
-  pos = map(val,
-             0,   	// isi nilai minimum ADC
-             1023,  // isi nilai maksimum ADC
-             30,   	// isi sudut minimum servo
-             150);  // isi sudut maksimum servo
+// Task 2: LED kuning (pin 7) – kecepatan 2× lebih lambat dari LED merah
+void TaskBlink2(void *pvParameters) {
+  pinMode(ledPin2, OUTPUT);
+  while (1) {
+    digitalWrite(ledPin2, HIGH);
+    vTaskDelay(2 * delayTime / portTICK_PERIOD_MS);
+    digitalWrite(ledPin2, LOW);
+    vTaskDelay(2 * delayTime / portTICK_PERIOD_MS);
+  }
+}
 
-  // ===================== OUTPUT SERVO =====================
-  // Gerakkan servo sesuai hasil mapping
-  myservo.write(); // isi dengan variabel sudut
+// Task 3: Mencetak counter setiap 500ms (untuk monitoring)
+void Taskprint(void *pvParameters) {
+  int counter = 0;
+  while (1) {
+    counter++;
+    Serial.print("Counter: ");
+    Serial.println(counter);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+  }
+}
 
-  // ===================== MONITORING DATA =====================
-  // Tampilkan data ADC dan sudut servo ke Serial Monitor
-  Serial.print("ADC Potensio: ");
-  Serial.print(); // isi variabel ADC
-
-  Serial.print(" | Sudut Servo: ");
-  Serial.println(); // isi variabel sudut
-
-  // ===================== STABILISASI =====================
-  // Delay untuk memberi waktu servo bergerak stabil
-  delay(100); // isi dalam milidetik
+// Task 4: Membaca potensiometer dan mengupdate delayTime
+void TaskPot(void *pvParameters) {
+  while (1) {
+    potValue = analogRead(potPin);
+    // Mapping nilai ADC 0-1023 ke delay 100ms – 1000ms
+    delayTime = map(potValue, 0, 1023, 100, 1000);
+    vTaskDelay(100 / portTICK_PERIOD_MS);   // update setiap 100ms
+  }
 }
 ```
 
