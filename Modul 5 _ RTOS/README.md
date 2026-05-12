@@ -19,27 +19,15 @@
 > 
 > Contoh task keempat untuk menyalakan LED di pin 6 setiap 700 ms:
 ```c++
-#include <Servo.h> // library untuk servo motor
-
-Servo myservo; // membuat objek servo
-
-// ===================== PIN SETUP =====================
-// Tentukan pin yang digunakan untuk potensiometer dan servo
-const int potensioPin = A0;  // isi pin analog input (contoh A0)
-const int servoPin = 9;      // isi pin digital untuk servo (PWM)
-
-// ===================== VARIABEL =====================
-// Variabel untuk menyimpan data ADC dan sudut servo
-int pos = 0; // isi dengan tipe data dan inisialisasi awal
-int val = 0; // isi dengan tipe data dan inisialisasi awal
-
-void setup() {
-
-  // Hubungkan servo ke pin yang sudah ditentukan
-  myservo.attach(servoPin); // isi dengan servoPin
-
-  // Aktifkan komunikasi serial untuk monitoring
-  Serial.begin(9600); // isi baud rate (contoh 9600)
+void TaskBaru(void *pvParameters) {
+  pinMode(6, OUTPUT);
+  while(1) {
+    digitalWrite(6, HIGH);
+    vTaskDelay(700 / portTICK_PERIOD_MS);
+    digitalWrite(6, LOW);
+    vTaskDelay(700 / portTICK_PERIOD_MS);
+  }
+}
 ```
 
 3. Modifikasi program berikut agar servo hanya bergerak dalam rentang 30° hingga 150°, meskipun potensiometer tetap memiliki rentang ADC 0–1023. Jelaskan program pada file README.md 
