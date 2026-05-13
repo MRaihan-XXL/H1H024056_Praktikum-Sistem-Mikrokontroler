@@ -133,54 +133,63 @@ Jika dua task mencoba mengirim ke queue secara bersamaan, mekanisme internal que
 > Hasil modifikasi (menggunakan sensor DHT11) menghasilkan pembacaan suhu dan kelembaban secara dinamis sesuai kondisi lingkungan. Program:
 
 ```c++
-#include <Arduino_FreeRTOS.h>
-#include <queue.h>
-#include <DHT.h>
+#include <Arduino_FreeRTOS.h>   
+#include <queue.h>              
+#include <DHT.h>                
 
-#define DHTPIN 2
-#define DHTTYPE DHT11
+#define DHTPIN 2                // Pin data sensor DHT terhubung ke pin 2 Arduino
+#define DHTTYPE DHT11           // Tipe sensor: DHT11 (bisa diganti DHT22)
 
-DHT dht(DHTPIN, DHTTYPE);
+DHT dht(DHTPIN, DHTTYPE);       // Buat objek DHT
 
 struct readings {
-  float temp;
-  float hum;
+  float temp;               // Suhu dalam derajat Celcius
+  float h;         		    // Kelembaban dalam persen (%)
 };
 
-QueueHandle_t my_queue;
+QueueHandle_t my_queue;         // Handle queue (antar task)
 
-void read_data(void *pvParameters) {
-  struct readings data;
-  while(1) {
-    data.temp = dht.readTemperature();
-    data.hum = dht.readHumidity();
-    xQueueSend(my_queue, &data, portMAX_DELAY);
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-  }
+void read_data(void *pvParameters);   // Task membaca data dari DHT
+void display(void *pvParameters);    // Task menampilkan data ke Serial Monitor
+
+void setup() {
+  Serial.begin(9600);           // Mulai komunikasi serial (untuk output)
+  
+  dht.begin();                  // Inisialisasi sensor DHT
+
+  my_queue = xQueueCreate(1, sizeof(struct readings));
+
+  // Buat task pembaca sensor
+  xTaskCreate(read_data, "BacaSensor", 128, NULL, 1, NULL);
+  // Buat task penampil data 
+  xTaskCreate(display, "Tampilkan", 128, NULL, 1, NULL);
 }
 
-void display_data(void *pvParameters) {
-  struct readings data;
-  while(1) {
-    if(xQueueReceive(my_queue, &data, portMAX_DELAY) == pdPASS) {
+void loop() {
+  // Kosong - semua eksekusi dikelola oleh scheduler FreeRTOS
+}
+
+void display(void *pvParameters){
+  struct readings data;         // Variabel lokal untuk menyimpan data sementara
+
+  for(;;){
+
+    // Ambil data dari queue. Jika queue kosong
+    if (xQueueReceive(my_queue, &data, portMAX_DELAY) == pdPASS) {
+
+      // Jika berhasil menerima data, tampilkan ke Serial Monitor
       Serial.print("Suhu : ");
-      Serial.print(data.temp);
-      Serial.println(" C");
+      Serial.print(data.suhu);
+      Serial.println(" °C");
+
       Serial.print("Kelembaban : ");
-      Serial.print(data.hum);
+      Serial.print(data.kelembaban);
       Serial.println(" %");
+      
+      Serial.println("------------------------");
     }
   }
 }
-
-void setup() {
-  Serial.begin(9600);
-  dht.begin();
-  my_queue = xQueueCreate(5, sizeof(struct readings));
-  xTaskCreate(read_data, "read", 128, NULL, 1, NULL);
-  xTaskCreate(display_data, "display", 128, NULL, 1, NULL);
-}
-void loop() {}
 ```
 
 ## Dokumentasi
