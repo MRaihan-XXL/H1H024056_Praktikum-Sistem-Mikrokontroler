@@ -194,10 +194,11 @@ void display(void *pvParameters){
 
 ## Dokumentasi
 
-1. Percobaan 4A: Analog to Digital Converter (ADC)
+1. Percobaan 5A: Multitasking dengan FreeRTOS (LED + Potensiometer)
 
-![Percobaan 4A](Dokumentasi_Percobaan_4A.jpg)
+![Percobaan 5A](Dokumentasi_Percobaan_5A.jpg)
 
-2. Percobaan 4B: Pulse Width Modulation (PWM)
+2. Percobaan 5B: Komunikasi Task dengan Queue
 
-![Percobaan 4B](Dokumentasi_Percobaan_4A.jpg)
+![Percobaan 5B](Dokumentasi_Percobaan_5B.jpg)
+![Hasil Output 5B](Dokumentasi_Output_Percobaan_5B.png)
