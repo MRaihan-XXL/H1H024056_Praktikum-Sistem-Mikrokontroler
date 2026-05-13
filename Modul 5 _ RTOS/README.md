@@ -8,6 +8,7 @@
 > 
 > Pada program ini, ketiga task memiliki prioritas yang sama (prioritas 1). Scheduler menggunakan skema round‑robin dengan time slicing, sehingga setiap task mendapat jatah waktu eksekusi secara bergantian.
 
+
 2. Mengapa diperlukan fungsi map() dalam program tersebut?
 
 > Langkah menambahkan task keempat:
@@ -29,6 +30,7 @@ void TaskBaru(void *pvParameters) {
   }
 }
 ```
+
 
 3. Modifikasilah program dengan menambah sensor (misalnya potensiometer), lalu gunakan nilainya untuk mengontrol kecepatan LED! Bagaimana hasilnya? Jelaskan program pada file README.md.
 
@@ -110,17 +112,25 @@ void TaskPot(void *pvParameters) {
 }
 ```
 
+
 ## 5.6.4 Percobaan 5B: Komunikasi Task dengan Queue
 
-1. Jelaskan mengapa LED dapat diatur kecerahannya menggunakan fungsi analogWrite()!
+1. Apakah kedua task berjalan secara bersamaan atau bergantian? Jelaskan mekanismenya!
 
-> LED pada dasarnya hanya memiliki dua keadaan: menyala penuh (HIGH, 5V) atau mati (LOW, 0V). Namun, dengan PWM, pin digital dinyalakan dan dimatikan sangat cepat (sekitar 500 kali per detik). Mata manusia tidak mampu melihat kedipan cepat ini, sehingga yang terlihat adalah kecerahan rata-rata. analogWrite(ledPin, pwm) mengatur duty cycle (persentase waktu HIGH dalam satu periode). Semakin besar nilai PWM (0-255), semakin besar duty cycle, semakin terang LED.
+> Sama seperti percobaan 5A, kedua task (read_data dan display) berjalan secara bergantian (concurrent) di bawah pengelolaan scheduler FreeRTOS. Task read_data mengirim data ke queue, lalu vTaskDelay(100) menyebabkan task tersebut blocked selama 100 ms, sehingga scheduler beralih ke task display. Task display menunggu data dari queue dengan xQueueReceive(..., portMAX_DELAY). Jika queue kosong, task display juga blocked. Ketika read_data mengirim data, queue menjadi tidak kosong, maka task display di‑unblock dan langsung menampilkan data. Setelah selesai, scheduler dapat beralih lagi ke task lain.
 
-2. Apa hubungan antara nilai ADC (0–1023) dan nilai PWM (0–255)?
 
-> Hubungannya adalah proporsional linear. ADC membaca tegangan analog 0-5V menghasilkan nilai 0-1023. Nilai ini kemudian dipetakan ke rentang PWM 0-255 menggunakan fungsi map() karena resolusi PWM hanya 8-bit (255 level), sedangkan ADC 10-bit (1023 level). 
+2. Apakah program ini berpotensi mengalami race condition? Jelaskan!
 
-3. Modifikasilah program berikut agar LED hanya menyala pada rentang kecerahan sedang, yaitu hanya ketika nilai PWM berada pada rentang 50 sampai 200. Jelaskan program pada file README.md.
+> Program ini tidak berpotensi mengalami race condition karena queue FreeRTOS sudah dirancang sebagai mekanisme komunikasi antar task yang thread‑safe. Race condition terjadi ketika dua task mengakses sumber daya bersama secara bersamaan tanpa sinkronisasi. Pada program queue:
+> 1. xQueueSend dan xQueueReceive adalah fungsi yang aman (dilindungi oleh critical section internal FreeRTOS).
+> 2. Data dikirim melalui queue (by copy), bukan by reference, sehingga tidak ada akses langsung ke variabel yang sama.
+Jika dua task mencoba mengirim ke queue secara bersamaan, mekanisme internal queue akan menjadwalkan akses secara berurutan.
+
+
+3. Modifikasilah program dengan menggunakan sensor DHT sesungguhnya sehingga informasi yang ditampilkan dinamis. Bagaimana hasilnya? Jelaskan program pada file README.md.
+
+> Hasil modifikasi (menggunakan sensor DHT11) menghasilkan pembacaan suhu dan kelembaban secara dinamis sesuai kondisi lingkungan [2]. Program:
 
 ```c++
 #include <Arduino.h> // library dasar Arduino (tidak wajib diubah)
